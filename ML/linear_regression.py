@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from linear_regression_scratch import LinearRegression
+import numpy as np
 
 df=pd.read_csv("linear_data.csv")
 ''' 
@@ -18,11 +19,14 @@ X_train, X_test, y_train, y_test=train_test_split(x,y, test_size=0.2, random_sta
 
 
 model=LinearRegression()
-LinearRegression.fit(X_train, y_train)
+model.fit(X_train, y_train)
 predictions=model.predict(X_test)
 
+print([y_test, predictions])
+
+
 def mse(y_test, predictions):
-    return np̣.mean((y_test-predictions)**2)
+    return np.mean((y_test-predictions)**2)
     
 
 mse=mse(y_test, predictions)

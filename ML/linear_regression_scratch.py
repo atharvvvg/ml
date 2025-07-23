@@ -3,7 +3,7 @@ import numpy as np
 class LinearRegression:
     # initialized with learning rate and number of iterations (hyperparameters)
     # change learning rate to improve model based on data
-    def __init__(self, lr=0.0001, n_iter=1000):
+    def __init__(self, lr=0.001, n_iter=1000):
         self.lr=lr
         self.n_iter=n_iter
         self.weight=None
@@ -43,5 +43,5 @@ class LinearRegression:
             self.bias=self.bias-(self.lr*db)
 
     def predict(self, X):
-        y_pred=np.dot(self.weight, X)+self.bias
+        y_pred=np.dot(X, self.weight)+self.bias
         return y_pred
