@@ -52,19 +52,25 @@ class DecisionTrees:
         # find best split
         best_feature, best_thresh=self._best_split(X, y, feat_idxs)
 
+        #create child nodes
+        left_idxs, right_idxs=self._split(X[:, best_feature], best_thresh)
+        left=self._grow_tree(X[left_idxs, :], y[left_idxs], depth+1)
+        right=self._grow_tree(X[right_idxs, :], y[right_idxs], depth+1)
+        return Node(best_feature, best_thresh, left, right)
+
 
     # HUH ??
     def _best_split(self, X, y, feat_idxs):
         best_gain=-1
         split_idx, split_threshold=None, None
 
-        for feat_idx, in feat_idxs:
+        for feat_idx in feat_idxs:
             X_column=X[:, feat_idx]
             thresholds=np.unique(X_column)
 
             for thr in thresholds:
                 # calculate information gain
-                gain=
+                gain=self._information_gain(y, X_column, thr)
                 
                 if gain>best_gain:
                     best_gain=gain
@@ -73,10 +79,52 @@ class DecisionTrees:
 
         return split_idx, split_threshold
 
+    def _information_gain(self, y, X_column, threshold):
+        # parent entropy
+        parent_entropy=self._entropy(y)
+
+        # create children
+        left_idxs, right_idxs=self._split(X_column, threshold)
+
+        if len(right_idxs)==0 or len(right_idxs)==0:
+            return 0
+
+        # calculate weighted avg entropy of children
+        n=len(y)
+        n_l, n_r=len(left_idxs, right_idxs)
+        e_l, e_r=self.entropy(y[left_idxs]), self.entropy(y[right_idxs])
+        child_entropy=(n_l/n)*e_l+(n_r/n)*n_r
+
+        # IG calculation
+        information_gain=parent_entropy-child_entropy
+        return information_gain
+
+
+    def _split(self, X_column, split_thresh):
+        left_idxs=np.argwhere(X_column<=split_thresh).flatten()
+        right_idxs=np.argwhere(X_column>split_thresh).flatten()
+        return left_idxs, right_idxs
+
+    def _entropy(self, y):
+        # calculating p(X)
+        hist=np.bincount(y)
+        ps=hist/len(y)
+        # calculate entropy
+        return -(np.sum([p*np.log(p) for p in ps if ps>0]))
+
     def _most_common_label(self, y):
         counter=Counter(y)
         # gives most common item's label ONLY
         value=counter.most_common(1)[0][0]
         return value
 
-    def predict():
+    def predict(self, X):
+        return np.array([self._traverse_tree(x, self.root) for x in X])
+    
+    def _traverse_tree(self, x, node):
+        if node.is_leaf_node():
+            return node.value()
+
+        if x[node.feature]<=node.threshold:
+            return self._traverse_tree(x, node.left)
+        return self._traverse_tree(x, node.right)
