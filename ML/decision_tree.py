@@ -92,8 +92,8 @@ class DecisionTrees:
 
         # calculate weighted avg entropy of children
         n=len(y)
-        n_l, n_r=len(left_idxs, right_idxs)
-        e_l, e_r=self.entropy(y[left_idxs]), self.entropy(y[right_idxs])
+        n_l, n_r=len(left_idxs), len(right_idxs)
+        e_l, e_r=self._entropy(y[left_idxs]), self._entropy(y[right_idxs])
         child_entropy=(n_l/n)*e_l+(n_r/n)*n_r
 
         # IG calculation
@@ -111,7 +111,7 @@ class DecisionTrees:
         hist=np.bincount(y)
         ps=hist/len(y)
         # calculate entropy
-        return -(np.sum([p*np.log(p) for p in ps if ps>0]))
+        return -np.sum([p*np.log2(p) for p in ps if p>0])
 
     def _most_common_label(self, y):
         counter=Counter(y)
@@ -124,7 +124,7 @@ class DecisionTrees:
     
     def _traverse_tree(self, x, node):
         if node.is_leaf_node():
-            return node.value()
+            return node.value
 
         if x[node.feature]<=node.threshold:
             return self._traverse_tree(x, node.left)

@@ -14,7 +14,9 @@ clf.fit(X_train, y_train)
 predictions=clf.predict(X_test)
 
 def accuracy(y_test, y_pred):
-    return np.sum((y_test==y_pred)/len(y_test))
+    return np.sum(y_test==y_pred)/len(y_test)
 
 acc=accuracy(y_test, predictions)
 print(acc)
+
+print([y_test, predictions])
