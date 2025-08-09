@@ -2,3 +2,4 @@ venv
 *.csv
 __pycache__
 gpt_scratch/.ipynb_checkpoints
+gpt_scratch/input*
